@@ -30,11 +30,14 @@ router.post("/game", async (req, res) => {
     if (
       !selectedCategories ||
       !Array.isArray(selectedCategories) ||
-      selectedCategories.length !== 5
+      selectedCategories.length === 0 ||
+      selectedCategories.length > 5
     ) {
       return res
         .status(400)
-        .json({ error: "selectedCategories must be an array of 5 categories" });
+        .json({
+          error: "selectedCategories must be an array of 1-5 categories",
+        });
     }
     const gameId = uuidv4();
     const used = new Set<string>();
