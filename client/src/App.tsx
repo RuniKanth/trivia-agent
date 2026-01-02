@@ -9,7 +9,7 @@ export default function App() {
     <div className="min-h-screen">
       <header className="py-6 shadow-sm bg-white/60 backdrop-blur">
         <div className="container flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-indigo-700">Trivia Agent</h1>
+          <h1 className="text-2xl font-bold text-indigo-700">Trivia Agents</h1>
           <nav>
             <Link to="/" className="text-indigo-600 hover:underline">
               Home
