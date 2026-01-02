@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  @apply bg-gradient-to-br from-indigo-50 via-white to-emerald-50;
+}
+
+/* small utilities for beautiful UI */
+.container {
+  @apply max-w-5xl mx-auto px-4;
+}
