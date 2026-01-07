@@ -9,15 +9,23 @@ type PublicQuestion = {
   choices: string[];
 };
 
+type AnswerRecord = {
+  questionId: string;
+  category: string;
+  prompt: string;
+  choices: string[];
+  selectedIndex: number;
+  correct: boolean;
+  explanation?: string;
+};
+
 export default function Game() {
   const { id } = useParams();
   const [questions, setQuestions] = useState<PublicQuestion[]>([]);
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [answers, setAnswers] = useState<
-    { questionId: string; correct: boolean }[]
-  >([]);
-  const [feedback, setFeedback] = useState<string | null>(null);
+  const [answers, setAnswers] = useState<AnswerRecord[]>([]);
+  const [feedback, setFeedback] = useState<{ message: string; correct: boolean } | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,16 +42,40 @@ export default function Game() {
         questionId: q.id,
         choiceIndex,
       });
-      setAnswers([...answers, { questionId: q.id, correct: res.data.correct }]);
-      setFeedback(
-        res.data.correct
+      const newAnswer: AnswerRecord = {
+        questionId: q.id,
+        category: q.category,
+        prompt: q.prompt,
+        choices: q.choices,
+        selectedIndex: choiceIndex,
+        correct: res.data.correct,
+        explanation: res.data.explanation,
+      };
+
+      const updatedAnswers = [...answers, newAnswer];
+      setAnswers(updatedAnswers);
+
+      setFeedback({
+        message: res.data.correct
           ? "Correct!"
-          : `Incorrect. ${res.data.explanation || ""}`
-      );
+          : `Incorrect. ${res.data.explanation || ""}`,
+        correct: res.data.correct,
+      });
+
       setTimeout(() => {
         setFeedback(null);
-        if (index + 1 < questions.length) setIndex(index + 1);
-      }, 1200);
+        if (index + 1 < questions.length) {
+          setIndex(index + 1);
+        } else {
+          // Navigate to results with full answer context
+          navigate("/results", {
+            state: {
+              answers: updatedAnswers,
+              total: questions.length,
+            },
+          });
+        }
+      }, 3200);
     } catch (e: any) {
       alert(e?.response?.data?.error || e.message);
     }
@@ -92,7 +124,16 @@ export default function Game() {
           ))}
         </div>
 
-        {feedback && <div className="mt-4 text-sm font-medium">{feedback}</div>}
+        {feedback && (
+          <div
+            className={`mt-4 text-sm font-semibold flex items-start gap-2 ${
+              feedback.correct ? "text-green-700" : "text-red-700"
+            }`}
+          >
+            <span aria-hidden>{feedback.correct ? "✔" : "✕"}</span>
+            <span>{feedback.message}</span>
+          </div>
+        )}
 
         <div className="mt-4 text-sm text-gray-500">
           Question {index + 1} / {questions.length}

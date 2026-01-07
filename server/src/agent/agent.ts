@@ -287,7 +287,7 @@ export async function generateQuestionsForCategories(
 ): Promise<StoredQuestion[]> {
   const now = new Date();
   const todayIso = now.toISOString().split("T")[0];
-  const tenDaysAgo = new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000)
+  const tenDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
     .toISOString()
     .split("T")[0];
 
